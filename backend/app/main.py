@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .director import generate_storyboard, regenerate_scene
@@ -17,13 +17,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+router = APIRouter()
 
-@app.get("/api/health")
+
+@router.get("/health")
 def health():
     return {"status": "ok", "ai": bool(os.getenv("ANTHROPIC_API_KEY"))}
 
 
-@app.post("/api/storyboard", response_model=Storyboard)
+@router.post("/storyboard", response_model=Storyboard)
 def storyboard(req: StoryboardRequest):
     try:
         return generate_storyboard(req)
@@ -31,9 +33,21 @@ def storyboard(req: StoryboardRequest):
         raise HTTPException(status_code=502, detail=f"Storyboard generation failed: {exc}")
 
 
-@app.post("/api/scene/regenerate", response_model=Scene)
+@router.post("/scene/regenerate", response_model=Scene)
 def regenerate(body: RegenerateRequest):
     try:
         return regenerate_scene(body)
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Scene regeneration failed: {exc}")
+
+
+# Serverless hosts differ in whether the "/api" prefix (or the "/api/index"
+# function name) reaches the app, so expose the same routes under each form.
+# The frontend always calls /api/*.
+for prefix in ("/api", "/api/index", ""):
+    app.include_router(router, prefix=prefix, include_in_schema=(prefix == "/api"))
+
+
+@app.get("/", include_in_schema=False)
+def root():
+    return {"service": "CineFlow AI", "health": "/api/health", "docs": "/docs"}
