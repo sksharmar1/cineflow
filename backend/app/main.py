@@ -1,7 +1,11 @@
 import os
 
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+BUILD = "2026-11-13-paths-v3"
 
 from .director import generate_storyboard, regenerate_scene
 from .models import RegenerateRequest, Scene, Storyboard, StoryboardRequest
@@ -17,12 +21,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exc(request: Request, exc: StarletteHTTPException):
+    body = {"detail": exc.detail}
+    if exc.status_code == 404:
+        # Diagnostic: show what the serverless host actually passed in.
+        body.update(
+            build=BUILD,
+            path=request.url.path,
+            root_path=request.scope.get("root_path", ""),
+            method=request.method,
+        )
+    return JSONResponse(body, status_code=exc.status_code)
+
+
 router = APIRouter()
 
 
 @router.get("/health")
 def health():
-    return {"status": "ok", "ai": bool(os.getenv("ANTHROPIC_API_KEY"))}
+    return {"status": "ok", "ai": bool(os.getenv("ANTHROPIC_API_KEY")), "build": BUILD}
 
 
 @router.post("/storyboard", response_model=Storyboard)
@@ -50,4 +69,4 @@ for prefix in ("/api", "/api/index", ""):
 
 @app.get("/", include_in_schema=False)
 def root():
-    return {"service": "CineFlow AI", "health": "/api/health", "docs": "/docs"}
+    return {"service": "CineFlow AI", "build": BUILD, "health": "/api/health", "docs": "/docs"}
