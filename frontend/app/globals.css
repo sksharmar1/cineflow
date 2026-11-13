@@ -1,0 +1,48 @@
+:root {
+  --bg: #0b0d12;
+  --panel: #151922;
+  --border: #262c3a;
+  --text: #e8ebf2;
+  --muted: #8b93a7;
+  --accent: #f5a524;
+  --accent-2: #7c5cff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 50% -10%, #1c2033 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+main { max-width: 960px; margin: 0 auto; padding: 48px 20px 96px; }
+h1 { font-size: 2.2rem; margin: 0 0 4px; letter-spacing: -0.02em; }
+.tag { color: var(--muted); margin: 0 0 32px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+textarea, input, select {
+  width: 100%; background: #0f1219; color: var(--text); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; font: inherit;
+}
+textarea { min-height: 96px; resize: vertical; }
+label { display: block; font-size: 0.8rem; color: var(--muted); margin: 14px 0 6px; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+button {
+  font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--border);
+  background: #1d2230; color: var(--text); padding: 8px 12px;
+}
+button:hover { border-color: var(--accent-2); }
+button.primary {
+  background: linear-gradient(90deg, var(--accent), #ff7a3d); color: #1a1205; border: 0;
+  font-weight: 700; padding: 12px 22px; margin-top: 18px;
+}
+button:disabled { opacity: 0.55; cursor: progress; }
+.error { color: #ff7b7b; margin-top: 12px; }
+.banner { color: var(--muted); font-size: 0.85rem; margin: 6px 0 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+.scene h3 { margin: 0 0 4px; font-size: 1rem; }
+.scene .meta { color: var(--accent); font-size: 0.78rem; margin-bottom: 8px; }
+.scene p { margin: 6px 0; font-size: 0.9rem; color: #c9cfdd; }
+.scene .prompt { font-size: 0.78rem; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 8px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.actions button { font-size: 0.8rem; padding: 5px 9px; }
+.head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
