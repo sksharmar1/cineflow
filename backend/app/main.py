@@ -67,6 +67,7 @@ for prefix in ("/api", "/api/index", ""):
     app.include_router(router, prefix=prefix, include_in_schema=(prefix == "/api"))
 
 
+@app.get("/api", include_in_schema=False)
 @app.get("/", include_in_schema=False)
 def root():
     return {"service": "CineFlow AI", "build": BUILD, "health": "/api/health", "docs": "/docs"}
